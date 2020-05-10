@@ -1,10 +1,16 @@
 <?php
 
-include("functions.php");
-    $location = Locations();
-    $caracterid = $_GET ['id'];
-    $uLocation = updateLocation();
-    $locationName = locationName();
+
+
+
+ // $var = '';
+ // if(isset($var)){
+ //
+ // }else{
+ //
+ //
+ // }
+
 ?>
 
 
@@ -12,12 +18,21 @@ include("functions.php");
 <?php
   include("dbconnect.php");
 
+  include("functions.php");
+
+
+
+
     $query = $conn->prepare("SELECT * FROM characters");
     $query->execute();
     $result = $query->fetchAll();
     $query = $conn->prepare("SELECT * FROM characters WHERE id = :id");
     $query->execute([':id' => $_GET['id']]);
     $result1 = $query->fetch();
+
+    $location = Locations();
+    $id = $result1['location'];
+    $locationName = locationName($id);
 
 
     ?>
@@ -34,6 +49,7 @@ include("functions.php");
     <link href="resources/css/style.css" rel="stylesheet"/>
 </head>
 <body>
+
 <header><h1><?php echo $result1 ['name']?></h1>
     <a class="backbutton" href="index.php"><i class="fas fa-long-arrow-alt-left"></i> Terug</a></header>
 <div id="container">
@@ -49,7 +65,11 @@ include("functions.php");
                 <ul class="gear">
                     <li><b>Weapon</b>: <?php echo $result1 ['weapon']?></li>
                     <li><b>Armor</b>: <?php echo $result1 ['armor']?></li>
-                    <li><b>Locatie</b>: <?php echo $locationName[0];?></li>
+                    <li><b>Locatie</b>: <?php if(isset($result1['location'])){ echo $locationName[0];}
+                    else {
+                      echo "Selecteer een locatie";
+                    }
+                    ?></li>
                 </ul>
             </div>
         </div>
@@ -58,15 +78,13 @@ include("functions.php");
               <?php echo $result1 ['bio']?>
             </p>
         </div>
-        <form>
+        <form method="post" action="updatecharacter.php">
           <label><b>Huidige Locatie:</b></label>
-          <select name="id" hidden>
-                  <option value="<?php echo $caracterid?>" hidden></option>
-              </select>
+          <input value="<?php echo $_GET['id']; ?>" type="hidden" name="characterId"></option>
           <select name='locatie'>
             <?php
                     foreach($location as $row){ ?>
-                       <option value="<?php echo $row['id'] ?>"><?php echo $row['name'] ?></option>
+                       <option <?php if($result1['location'] == $row['id']){echo "selected";}  ?> value="<?php echo $row['id'] ?>"><?php echo $row['name'] ?></option>
 
                 <?php   }
                  ?>
