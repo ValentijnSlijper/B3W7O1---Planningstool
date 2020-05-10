@@ -37,6 +37,7 @@
     }
 
     function Characters1(){
+      $conn = DatabaseConnect();
       $query = $conn->prepare("SELECT * FROM characters");
       $query->execute();
       $result = $query->fetchAll();
@@ -61,21 +62,28 @@
         return $location;
     }
 
-    function updateLocation(){
+    function updateLocation($id, $location){
       $conn = DatabaseConnect();
       $query = $conn->prepare("UPDATE characters SET location = :locatie WHERE id = :id");
-      $query->execute([':id' => $_GET['id'], ':locatie' => $_GET['locatie']]);
+      $query->execute([':id' => $id, ':locatie' => $location]);
 
     }
 
-    function locationName(){
+    function locationName($id){
       $conn = DatabaseConnect();
-      $query = $conn->prepare("SELECT name FROM locations WHERE id = :locatie");
-      $query->execute([':locatie' => $_GET['locatie']]);
+      $query = $conn->prepare("SELECT name FROM locations WHERE id = :id");
+      $query->execute([':id' => $id]);
       $locationName = $query->fetch();
       return $locationName;
     }
 
+    function LocationCount(){
+      $conn = DatabaseConnect();
+      $query = $conn->prepare("SELECT COUNT(id) FROM locations");
+      $LocationA = $query->execute();
+      $LocationA = $query->fetch();
+      return $LocationA;
+    }
 
 
 ?>
